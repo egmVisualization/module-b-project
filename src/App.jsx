@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-          <h1>Did that work!?</h1>
+          <h1>It appears to have worked.</h1>
           <p>Why isn't it centered?</p>
     </>
   )
