@@ -90,6 +90,17 @@ function App() {
   const [focus, setFocus] = useState(null)        // where the mouse is
   const [releasedId, setReleasedId] = useState(null) // which Pokémon is "released"
 
+  const [selectedType, setSelectedType] = useState(null)   // null means "show all types"
+
+const visiblePoints = selectedType
+  ? basePoints.filter(p => p.type === selectedType)
+  : basePoints
+
+function handleTypeClick(type) {
+  setSelectedType(current => (current === type ? null : type))
+  setReleasedId(null)
+}
+
   // Download all the sprite pictures in advance so they appear instantly on hover
   useEffect(() => {
     pokemons.forEach(p => {
@@ -99,14 +110,14 @@ function App() {
   }, [])
 
   // Where each dot appears right now, after the magnifier
-  const points = basePoints.map(p => magnify(p, focus))
+  const points = visiblePoints.map(p => magnify(p, focus))
 
   function handleMouseMove(event) {
     const [mouseX, mouseY] = d3.pointer(event, svgRef.current)
     const newFocus = { x: mouseX, y: mouseY }
     setFocus(newFocus)
 
-    const moved = basePoints.map(p => magnify(p, newFocus))
+    const moved = visiblePoints.map(p => magnify(p, newFocus))
     const distanceTo = p => Math.hypot(p.x - mouseX, p.y - mouseY)
 
     // Keep the current Pokémon released while the mouse stays near it
@@ -135,12 +146,31 @@ function App() {
 
   return (
     <main className="chart-page">
-      <h1>Who hits hard, and who lasts?</h1>
+      <h1>Pick your Pokémon</h1>
       <p className="subtitle">
-        Twenty well-known Pokémon by HP and attack. The dashed lines mark the
-        median of each. Move across the chart to spread out crowded dots, and
-        land on one to release its Pokémon.
+        Select an avatar to match your style of play and elemental preference.
       </p>
+
+      <div className="type-filters">
+  <button
+    className={selectedType === null ? "filter active" : "filter"}
+    aria-pressed={selectedType === null}
+    onClick={() => setSelectedType(null)}
+  >
+    All types
+  </button>
+  {Object.entries(typeColors).map(([type, color]) => (
+    <button
+      key={type}
+      className={selectedType === type ? "filter active" : "filter"}
+      aria-pressed={selectedType === type}
+      onClick={() => handleTypeClick(type)}
+    >
+      <span className="swatch" style={{ background: color }} />
+      {type}
+    </button>
+  ))}
+</div>
 
       <svg
         ref={svgRef}
@@ -189,8 +219,7 @@ function App() {
         <text className="axis-title" x={(plotLeft + plotRight) / 2} y={height - 12} textAnchor="middle">
           HP
         </text>
-        <text className="axis-title" textAnchor="middle"
-          transform={`translate(18, ${(plotTop + plotBottom) / 2}) rotate(-90)`}>
+        <text className="axis-title" x={plotLeft} y={plotTop - 12} textAnchor="middle">
           Attack
         </text>
 
@@ -221,15 +250,7 @@ function App() {
         )}
       </svg>
 
-      {/* Color key */}
-      <ul className="legend">
-        {Object.entries(typeColors).map(([type, color]) => (
-          <li key={type}>
-            <span className="swatch" style={{ background: color }} />
-            {type}
-          </li>
-        ))}
-      </ul>
+  
     </main>
   )
 }

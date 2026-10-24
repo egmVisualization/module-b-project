@@ -1,184 +1,196 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* ===== Page layout ===== */
+.chart-page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+.chart-page h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2.25rem;
+  line-height: 1.15;
 }
 
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+.subtitle {
+  max-width: 62ch;
+  margin: 0 0 2rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #4A5568;
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-}
-
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
-}
-
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
+/* ===== The chart ===== */
+.scatter {
+  display: block;
   width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: inherit;
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
-  }
+/* Everything inside the chart ignores the mouse, so the chart itself
+   always knows where the mouse is */
+.scatter * {
+  pointer-events: none;
+}
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+.axis-line {
+  stroke: #0E2240;
+  stroke-width: 1.5;
+  stroke-opacity: 0.3;
+}
+
+.tick-label {
+  font-size: 13px;
+  fill: #4A5568;
+}
+
+.axis-title {
+  font-size: 15px;
+  font-weight: 600;
+  fill: #0E2240;
+}
+
+.median-line {
+  stroke: #0E2240;
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+}
+
+.quadrant-label {
+  font-size: 14px;
+  font-style: italic;
+  fill: #0E2240;
+  opacity: 0.55;
+}
+
+.lens {
+  fill: #0E2240;
+  fill-opacity: 0.04;
+  stroke: #0E2240;
+  stroke-opacity: 0.15;
+}
+
+/* ===== The dots ===== */
+.dot-group {
+  transition: transform 0.12s ease-out;
+}
+
+.dot {
+  stroke: white;
+  stroke-width: 1.5;
+}
+
+/* ===== The "release" moment ===== */
+.released {
+  transition: transform 0.12s ease-out;
+}
+
+/* A burst of the type's color that expands and fades */
+.release-burst {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: burst 0.5s ease-out forwards;
+}
+
+/* The PokÃ©mon pops out of the burst with a little overshoot */
+.sprite {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: pop-out 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.sprite-name,
+.sprite-stats {
+  paint-order: stroke;
+  stroke: white;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  animation: fade-in 0.3s 0.15s ease-out both;
+}
+
+.sprite-name {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #0E2240;
+}
+
+.sprite-stats {
+  font-size: 12px;
+  fill: #4A5568;
+}
+
+@keyframes burst {
+  from { transform: scale(0.2); opacity: 0.7; }
+  to   { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes pop-out {
+  from { transform: scale(0) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Skip the animations for visitors who've asked their device to reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .dot-group,
+  .released,
+  .release-burst,
+  .sprite,
+  .sprite-name,
+  .sprite-stats {
+    transition: none;
+    animation: none;
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+  .release-burst {
+    opacity: 0;
   }
+}
+
+/* ===== Color key ===== */
+.type-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #0E2240;
+  background: white;
+  border: 1px solid #CBD5E0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.filter:hover {
+  border-color: #0E2240;
+}
+
+.filter.active {
+  background: #0E2240;
+  border-color: #0E2240;
+  color: white;
+}
+
+.filter:focus-visible {
+  outline: 2px solid #1D428A;
+  outline-offset: 2px;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
